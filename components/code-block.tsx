@@ -1,4 +1,7 @@
-'use client';
+"use client";
+
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 interface CodeBlockProps {
   node: any;
@@ -14,15 +17,34 @@ export function CodeBlock({
   children,
   ...props
 }: CodeBlockProps) {
-  if (!inline) {
+  // Extract language from className (format: "language-javascript")
+  const match = /language-(\w+)/.exec(className || "");
+  const language = match ? match[1] : "text";
+
+  if (language !== "text") {
     return (
       <div className="not-prose flex flex-col">
-        <pre
+        <SyntaxHighlighter
+          style={oneDark}
+          language={language}
+          PreTag="div"
+          className="text-sm max-w-2xl overflow-x-auto border border-zinc-200 dark:border-zinc-700 rounded-xl"
+          customStyle={{
+            margin: 0,
+            padding: "1rem",
+            backgroundColor: "transparent",
+            whiteSpace: "pre-wrap",
+            wordBreak: "break-word",
+          }}
+          codeTagProps={{
+            style: {
+              backgroundColor: "transparent",
+            },
+          }}
           {...props}
-          className={`text-sm w-full overflow-x-auto dark:bg-zinc-900 p-4 border border-zinc-200 dark:border-zinc-700 rounded-xl dark:text-zinc-50 text-zinc-900`}
         >
-          <code className="whitespace-pre-wrap break-words">{children}</code>
-        </pre>
+          {String(children).replace(/\n$/, "")}
+        </SyntaxHighlighter>
       </div>
     );
   } else {

@@ -1,9 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { ChevronDownIcon, LoaderIcon } from './icons';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Markdown } from './markdown';
+import { useState } from "react";
+import { ChevronDownIcon, LoaderIcon } from "./icons";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface MessageReasoningProps {
   isLoading: boolean;
@@ -14,7 +13,7 @@ export function MessageReasoning({
   isLoading,
   reasoning,
 }: MessageReasoningProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const variants = {
     collapsed: {
@@ -24,12 +23,20 @@ export function MessageReasoning({
       marginBottom: 0,
     },
     expanded: {
-      height: 'auto',
+      height: "auto",
       opacity: 1,
-      marginTop: '1rem',
-      marginBottom: '0.5rem',
+      marginTop: "1rem",
+      marginBottom: "0.5rem",
     },
   };
+
+  function parseReasoning(reasoning: string) {
+    try {
+      return JSON.stringify(JSON.parse(reasoning), null, 2);
+    } catch (error) {
+      return reasoning;
+    }
+  }
 
   return (
     <div className="flex flex-col">
@@ -65,11 +72,13 @@ export function MessageReasoning({
             animate="expanded"
             exit="collapsed"
             variants={variants}
-            transition={{ duration: 0.2, ease: 'easeInOut' }}
-            style={{ overflow: 'hidden' }}
-            className="pl-4 text-zinc-600 dark:text-zinc-400 border-l flex flex-col gap-4"
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            style={{ overflow: "hidden" }}
+            className="pl-4 text-zinc-600 dark:text-zinc-400 border-l flex flex-col gap-4 whitespace-pre-wrap prose prose-sm h-[100px]"
           >
-            <Markdown>{reasoning}</Markdown>
+            <pre className="text-xs whitespace-pre-wrap">
+              {parseReasoning(reasoning)}
+            </pre>
           </motion.div>
         )}
       </AnimatePresence>
