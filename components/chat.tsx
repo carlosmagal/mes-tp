@@ -20,6 +20,7 @@ import { useSearchParams } from "next/navigation";
 import { useChatVisibility } from "@/hooks/use-chat-visibility";
 import { useAutoResume } from "@/hooks/use-auto-resume";
 import { ChatSDKError } from "@/lib/errors";
+import { Footer } from "./footer";
 
 export function Chat({
   id,
@@ -166,6 +167,8 @@ export function Chat({
           )}
         </form>
       </div>
+
+      <Footer />
 
       <Artifact
         chatId={id}
