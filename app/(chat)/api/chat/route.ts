@@ -72,9 +72,9 @@ export async function POST(request: Request) {
       differenceInHours: 24,
     });
 
-    if (messageCount > entitlementsByUserType[userType].maxMessagesPerDay) {
-      return new ChatSDKError("rate_limit:chat").toResponse();
-    }
+    // if (messageCount > entitlementsByUserType[userType].maxMessagesPerDay) {
+    //   return new ChatSDKError("rate_limit:chat").toResponse();
+    // }
 
     const chat = await getChatById({ id });
 
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
       await saveChat({
         id,
         userId: session.user.id,
-        title: "Chat default title",
+        title: "Code Smells Analyzer",
         visibility: selectedVisibilityType,
       });
     } else {
@@ -112,6 +112,8 @@ export async function POST(request: Request) {
       ],
     });
 
+    const begin = new Date();
+
     const flowiseResponse = await fetch(process.env.FLOWISE_API_URL!, {
       method: "POST",
       headers: {
@@ -120,6 +122,12 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify({ question: message.content }),
     });
+
+    const end = new Date();
+
+    console.log(
+      `Flowise API request took ${end.getTime() - begin.getTime()}ms`
+    );
 
     if (!flowiseResponse.ok) {
       const errorBody = await flowiseResponse.text();
